@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+      #demo {
+        padding: 50px;
+      }
+      .image-card-container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+      .card {
+        display: inline-block;
+
+        position: relative;
+        border: 1px solid grey;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 10px;
+        width: 100%;
+        max-width: 400px;
+      }
+      .card-top {
+        display: block;
+        max-width: initial;
+      }
+      .image-card__image {
+        width: 100%;
+      }
+      .image-card__body {
+        padding: 20px;
+      }
+
+      .image-card__title {
+        font-size: 1.5rem;
+        margin: 0;
+      }
+      .image-card__author {
+        margin-top: 10px;
+        color: grey;
+      }
+      .image-card__heart {
+        position: absolute;
+        top: 20px;
+        left: 10px;
+        width: 40px;
+      }
+      .heart-neutral {
+        fill: white;
+      }
+      .heart-active {
+        fill: crimson;
+      }
+      .image-card__count {
+        position: absolute;
+        top: 25px;
+        left: 50px;
+        color: white;
+      }
+      .basic-card__title {
+        font-size: 1.5rem;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="demo">
+      <basic-card :total-count="totalCount"></basic-card>
+      <div class="image-card-container">
+        <image-card
+          src="https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=720&q=80"
+          title="Toshi (black pug) wearing my pilot jacket."
+          author="Image by @charlesdeluvio"
+          v-on:change="handleChange"
+        ></image-card>
+        <image-card
+          src="https://images.unsplash.com/photo-1503256207526-0d5d80fa2f47?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=666&q=80"
+          title="Border Collie"
+          author="@baptiststandasert"
+          v-on:change="handleChange"
+        ></image-card>
+        <image-card
+          src="https://images.unsplash.com/photo-1510771463146-e89e6e86560e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=882&q=80"
+          title="very long title about the dog eating the flower"
+          author="@celine_sayuri"
+          v-on:change="handleChange"
+        ></image-card>
+      </div>
+    </div>
+
+    <template id="template-image-card">
+      <div class="card">
+        <img class="image-card__image" :src="src" />
+        <div class="image-card__body">
+          <h3 class="image-card__title">
+            {{ title }}
+          </h3>
+          <div class="image-card__author">{{ author }}</div>
+          <button class="image-card__heart" v-on:click="handleClick">
+            <svg v-if="count === 0" class="heart-neutral" viewBox="0 0 32 29.6">
+              <path
+                d="M16,28.261c0,0-14-7.926-14-17.046c0-9.356,13.159-10.399,14-0.454c1.011-9.938,14-8.903,14,0.454 C30,20.335,16,28.261,16,28.261z"
+              />
+            </svg>
+            <svg v-if="count > 0" class="heart-active" viewBox="0 0 32 29.6">
+              <path
+                d="M16,28.261c0,0-14-7.926-14-17.046c0-9.356,13.159-10.399,14-0.454c1.011-9.938,14-8.903,14,0.454 C30,20.335,16,28.261,16,28.261z"
+              />
+            </svg>
+          </button>
+          <div class="image-card__count" v-if="count > 0">{{ count }}</div>
+        </div>
+      </div>
+    </template>
+
+    <template id="template-basic-card">
+      <div class="card card-top">
+        <h3 class="basic-card__title">Total Likes: {{ totalCount }}</h3>
+      </div>
+    </template>
+
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script>
+      Vue.component("image-card", {
+        template: "#template-image-card",
+        props: {
+          src: String,
+          title: String,
+          author: String
+        },
+        data: function() {
+          // function CANNOT be arrow function
+          // because Vue need to bind 'this' for us
+          return {
+            count: 0
+          };
+        },
+        methods: {
+          handleClick() {
+            this.count++;
+            this.$emit("change", this.count); // this allows
+          }
+        }
+      });
+
+      Vue.component("basic-card", {
+        template: "#template-basic-card",
+        props: {
+          text: String,
+          totalCount: Number
+        }
+      });
+
+      new Vue({
+        el: "#demo",
+        data: {
+          totalCount: 0
+        },
+        methods: {
+          handleChange(count) {
+            console.log("count changed!", count);
+            this.totalCount++;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
